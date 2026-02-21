@@ -55,7 +55,7 @@ LATEX_TEMPLATE = r"""
 \textbf{Empresa} \hfill Cidade - UF \\
 \textit{Cargo} \hfill Mês/Ano -- Mês/Ano (ou Atual)
 \begin{itemize}
-    \item [Bullet point focado em resultado e na vaga. Use \textbf{negrito} para destacar tecnologias ou números.]
+    \item [Bullet point focado em resultado e na vaga. NÃO use negrito aqui no texto.]
     \item [Bullet point focado em resolução de problemas.]
 \end{itemize}
 
@@ -301,7 +301,7 @@ otimizado especificamente para passar nos filtros de ATS e encantar o recrutador
 
 REGRAS OBRIGATÓRIAS:
 1. Altere o resumo e os bullet points para focar nas palavras-chave e requisitos da vaga.
-2. Destaque resultados numéricos sempre que possível.
+2. Destaque resultados numéricos sempre que possível, MAS NÃO USE NEGRITO (\textbf{{}}) no meio dos textos ou bullet points. O negrito deve ser estritamente reservado apenas para os títulos, nomes de empresas e categorias.
 3. Se a vaga pedir inglês explícito, gere o currículo em inglês. Caso contrário, mantenha o idioma da vaga.
 4. A saída DEVE SER APENAS O CÓDIGO LATEX. Não adicione markdown (```latex), não adicione explicações. Retorne o código puro.
 5. Use EXATAMENTE o template LaTeX abaixo, preenchendo com os dados otimizados.
@@ -319,7 +319,7 @@ CURRÍCULO ATUAL:
 {final_resume_text}
 """
         # Chamada direta via requests para garantir que vá para a Perplexity
-        url = "https://api.perplexity.ai/chat/completions"
+        url = "[https://api.perplexity.ai/chat/completions](https://api.perplexity.ai/chat/completions)"
         payload = {
             "model": "sonar", 
             "messages": [
