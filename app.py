@@ -90,7 +90,7 @@ HTML_PAGE = """
     <div class="max-w-5xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-10">
             <h1 class="text-4xl font-extrabold text-blue-900 tracking-tight">Gerador de Currículos ATS</h1>
-            <p class="mt-2 text-lg text-gray-600">Otimize seu currículo em LaTeX para qualquer vaga usando a API da OpenAI.</p>
+            <p class="mt-2 text-lg text-gray-600">Otimize seu currículo em LaTeX para qualquer vaga usando a API da Perplexity.</p>
         </div>
 
         <div class="bg-white shadow-xl rounded-lg overflow-hidden flex flex-col md:flex-row">
@@ -142,9 +142,21 @@ HTML_PAGE = """
             <div class="md:w-1/2 p-6 flex flex-col bg-gray-900 text-gray-100">
                 <div class="flex justify-between items-center mb-2">
                     <h3 class="text-lg font-medium text-white">Código LaTeX Gerado</h3>
-                    <button id="copyBtn" class="hidden text-sm bg-gray-700 hover:bg-gray-600 text-white py-1 px-3 rounded transition-colors">
-                        <i class="fas fa-copy mr-1"></i> Copiar
-                    </button>
+                    
+                    <!-- Botoes de Ação -->
+                    <div class="flex space-x-2">
+                        <button id="copyBtn" class="hidden text-sm bg-gray-700 hover:bg-gray-600 text-white py-1 px-3 rounded transition-colors">
+                            <i class="fas fa-copy mr-1"></i> Copiar
+                        </button>
+                        
+                        <!-- Formulário Secreto do Overleaf -->
+                        <form id="overleafForm" action="https://www.overleaf.com/docs" method="post" target="_blank" class="hidden">
+                            <input type="hidden" name="snip" id="overleafSnip" value="">
+                            <button type="submit" class="text-sm bg-green-600 hover:bg-green-500 text-white py-1 px-3 rounded transition-colors" title="Abre uma pré-visualização no Overleaf">
+                                <i class="fas fa-external-link-alt mr-1"></i> Abrir no Overleaf
+                            </button>
+                        </form>
+                    </div>
                 </div>
                 
                 <div id="loading" class="hidden flex-1 flex flex-col items-center justify-center">
@@ -168,12 +180,15 @@ HTML_PAGE = """
             const loading = document.getElementById('loading');
             const resultBox = document.getElementById('resultLatex');
             const copyBtn = document.getElementById('copyBtn');
+            const overleafForm = document.getElementById('overleafForm');
+            const overleafSnip = document.getElementById('overleafSnip');
             const errorBox = document.getElementById('errorBox');
 
             // Reset UI
             resultBox.value = '';
             errorBox.classList.add('hidden');
             copyBtn.classList.add('hidden');
+            overleafForm.classList.add('hidden');
             loading.classList.remove('hidden');
             submitBtn.disabled = true;
             submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
@@ -200,8 +215,15 @@ HTML_PAGE = """
                     throw new Error(data.error || 'Erro desconhecido na geração.');
                 }
 
+                // Coloca o resultado na caixa
                 resultBox.value = data.latex;
+                
+                // Popula o formulário do Overleaf com o código gerado
+                overleafSnip.value = data.latex;
+
+                // Mostra os botões
                 copyBtn.classList.remove('hidden');
+                overleafForm.classList.remove('hidden');
 
             } catch (error) {
                 errorBox.textContent = error.message;
@@ -221,11 +243,11 @@ HTML_PAGE = """
             const btn = document.getElementById('copyBtn');
             const originalText = btn.innerHTML;
             btn.innerHTML = '<i class="fas fa-check mr-1"></i> Copiado!';
-            btn.classList.replace('bg-gray-700', 'bg-green-600');
+            btn.classList.replace('bg-gray-700', 'bg-blue-600');
             
             setTimeout(() => {
                 btn.innerHTML = originalText;
-                btn.classList.replace('bg-green-600', 'bg-gray-700');
+                btn.classList.replace('bg-blue-600', 'bg-gray-700');
             }, 2000);
         });
     </script>
@@ -271,7 +293,7 @@ def generate():
     resume_file = request.files.get('resume_file')
 
     if not api_key:
-        return jsonify({"error": "A API Key da OpenAI é obrigatória."}), 400
+        return jsonify({"error": "A API Key da OpenAI/Perplexity é obrigatória."}), 400
     if not job_description:
         return jsonify({"error": "A descrição da vaga é obrigatória."}), 400
 
